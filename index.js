@@ -1,0 +1,7 @@
+/*
+register user
+login user
+activate user account
+reset user password
+logout user
+*/
