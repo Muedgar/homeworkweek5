@@ -8,7 +8,12 @@ const club = new mongoose.Schema({
         required: true
     },
     reviews: {
-        review: [{type: mongoose.Schema.Types.ObjectId, ref: ClubReviews}]
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: ClubReviews
+    },
+    player: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: Player
     }
 });
 

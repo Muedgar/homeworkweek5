@@ -1,12 +1,14 @@
 const mongoose = require("mongoose");
+const PlayerReviews = require("./playerReviews");
 
 const player = new mongoose.Schema({
     name: {
-        type: Array,
+        type: String,
         required: true
     },
     reviews: {
-        type: mongoose.Schema.Types.ObjectId
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: PlayerReviews
     }
 });
 

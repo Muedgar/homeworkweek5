@@ -1,27 +1,13 @@
 const clubModel = require("../models/club");
 const clubReviewModel = require("../models/clubReviews");
-const redis = require('redis');
 
-let client = redis.createClient();
-
-client.on('connect', function(){
-    console.log('Connected to Redis...');
-  });
 
 // crud club
 const addClub = async (req,res) => {
     try {
         const {name} = req.body;
-
-        client.hmset(id, [
-            'name', name
-          ], function(err, reply){
-            if(err){
-              console.log(err.message);
-            }
-            res.status(201).json(reply);
-          });
-        
+        const club = await clubModel.create({name});
+        res.status(201).json(club);
     }catch(error) {
         console.log(error.message);
     }
@@ -30,7 +16,7 @@ const addClub = async (req,res) => {
 const updateClub = async (req,res) => {
     try {
         const {name} = req.body;
-        const club = await clubModel.findOneAndUpdate({_id: req.params.id},{name},{new: true});
+        const club = await clubModel.findOneAndUpdate({_id: req.params.id},{name});
         res.status(200).json(club);
     }catch(error) {
         console.log(error.message);
@@ -48,21 +34,11 @@ const deleteClub = async (req,res) => {
 
 const getOneClub = async (req,res) => {
     try {
-        // const club = await clubModel.findOne({_id: req.params.id}).populate('reviews').exec(function (err, data) {
-        //     if(err) console.log(err);
-        //     res.status(200).json(club);
-        // });
-
-        console.log("trying to return all clubs...");
-        client.hgetall(req.body.name, function(err, obj){
-            if(!obj){
-              console.log({
-                error: 'Club does not exist'
-              });
-            } else {
-              res.status(200).json(obj);
-            }
-          });
+        const club = await clubModel.findOne({_id: req.params.id}).populate('reviews').exec(function (err, data) {
+            if(err) console.log(err);
+            console.log("club found",data);
+            res.status(200).json(data);
+        });
     }catch(error) {
         console.log(error.message);
     }
@@ -70,8 +46,9 @@ const getOneClub = async (req,res) => {
 
 const getAllClubs = async (req,res) => {
     try {
-        
-        
+        console.log("trying to return all clubs");
+        const clubs = await clubModel.find({});
+        res.status(200).json(clubs);
     }catch(error) {
         console.log(error.message);
     }
@@ -83,10 +60,34 @@ const getAllClubs = async (req,res) => {
 
 const addClubReview = async (req,res) => {
     try {
-        const {text} = req.body;
-        const club = await clubReviewModel.create({text}, {new: true});
-        console.log(club);
-        res.status(201).json(club);
+        const {id,name, text} = req.body;
+        if(!id) {
+            const review = await clubReviewModel.create({club: name,text});
+            console.log(review._id);
+            const club = await clubModel.findOneAndUpdate({_id:req.params.id}, {reviews: review.id}, {new: true})
+            res.status(201).json({status: "review created...", review,club});
+        }else {
+            await clubReviewModel.findOne({_id:id}).then(async d=> {
+                
+                d.text.push(text);
+                console.log(d);
+                const review = await clubReviewModel.findByIdAndUpdate({_id:id},{club: d.club, text: d.text},{new: true});
+                const club = await clubModel.findOneAndUpdate({_id:req.params.id}, {reviews: review.id}, {new: true})
+                res.status(200).json({status: "review created...", review,club});
+            });
+        }
+        
+        
+    }catch(error) {
+        console.log(error.message);
+    }
+}
+
+//
+const getAllClubReviews = async (req,res) => {
+    try {
+        const allReviews = await clubReviewModel.find({});
+        res.status(200).json(allReviews);
     }catch(error) {
         console.log(error.message);
     }
@@ -98,5 +99,6 @@ module.exports = {
     deleteClub,
     getOneClub,
     getAllClubs,
-    addClubReview
+    addClubReview,
+    getAllClubReviews
 }

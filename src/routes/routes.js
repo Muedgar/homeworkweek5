@@ -6,7 +6,8 @@ const {
     deleteClub,
     getOneClub,
     getAllClubs,
-    addClubReview
+    addClubReview,
+    getAllClubReviews
 } = require("../controllers/club");
 
 // club
@@ -15,6 +16,7 @@ router.patch("/api/club/updateClub/:id", updateClub);
 router.delete("/api/club/deleteClub/:id", deleteClub);
 router.get("/api/club/getOneClub/:id", getOneClub);
 router.get("/api/club/getAllClubs", getAllClubs);
-router.post("/api/club/addClubReview", addClubReview);
+router.post("/api/club/addClubReview/:id", addClubReview);
+router.get("/api/club/getAllReviews",getAllClubReviews);
 
 module.exports = {router};

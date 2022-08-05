@@ -1,8 +1,13 @@
 const mongoose = require("mongoose");
 
 const clubReviews = new mongoose.Schema({
-    text: {
+    club: {
         type: String,
+        required: true,
+        default: "all clubs"
+    },
+    text: {
+        type: Array,
         required: true
     }
 });

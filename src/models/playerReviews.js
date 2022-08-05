@@ -1,8 +1,12 @@
 const mongoose = require("mongoose");
 
 const playerReviews = new mongoose.Schema({
+    player: {
+        type: String,
+        required: true
+    },
     text: {
-        type: Text,
+        type: Array,
         required: true
     }
 });
