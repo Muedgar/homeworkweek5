@@ -73,7 +73,7 @@ const addClubReview = async (req,res) => {
                 console.log(d);
                 const review = await clubReviewModel.findByIdAndUpdate({_id:id},{club: d.club, text: d.text},{new: true});
                 const club = await clubModel.findOneAndUpdate({_id:req.params.id}, {reviews: review.id}, {new: true})
-                res.status(200).json({status: "review created...", review,club});
+                res.status(200).json({status: "review created", review,club});
             });
         }
         
