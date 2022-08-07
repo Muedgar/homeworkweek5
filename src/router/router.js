@@ -9,7 +9,8 @@ const {register, getCurrentUser, login, logout} = require("../controllers/auth")
 router.post("/api/auth/register", register);
 router.get("/api/auth/getCurrentUser/:id",getCurrentUser);
 router.post("/api/auth/login",login);
-router.get("/api/auth/logoutFarmer/:id",logout);
+router.get("/api/auth/logout/:id",logout);
+
 
 
 
